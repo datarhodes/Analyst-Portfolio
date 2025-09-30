@@ -96,6 +96,3 @@ Discover meaningful trends in SAT results across **375 NYC public high schools**
 **Skills & Tools**  
 `EDA` • `data manipulation` • `summary statistics` • `data visualization`  
 Technologies: **Python**, **pandas**, **NumPy**, **matplotlib**, **Jupyter Notebook**
-
-**Code**  
-[Project repository / notebook](https://www.datacamp.com/projects/1596)
