@@ -67,6 +67,7 @@ The analysis clarified costing misalignments, enabling leadership to realign pri
 
 `SAP Crystal Reports` • `MySQL` • `Excel (Power Query, PivotTables)` • Multiple Linear Regression • Time-Series Analysis • ETL • EDA • Root-Cause Analysis • Data Visualization • Cross-Functional Collaboration
 
+___
 
 ### Exploring NYC Public School SAT Performance
 
