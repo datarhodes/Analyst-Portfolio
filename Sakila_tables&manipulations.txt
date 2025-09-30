@@ -1,0 +1,103 @@
+SELECT rental_payments.*, s.first_name, s.last_name, s.store_id, s.active INTO staff_sales_info
+FROM (SELECT r.rental_id, p.amount, r.staff_id
+FROM rental as r
+JOIN payment as p ON r.rental_id = p.rental_id) AS rental_payments
+LEFT JOIN staff as s ON rental_payments.staff_id = s.staff_id;
+
+
+SELECT category_match.film_id, category_match.title, category.name INTO title_and_genre
+FROM (SELECT film.film_id, film.title, film_category.category_id
+FROM film
+JOIN film_category ON film.film_id = film_category.film_id) AS category_match
+LEFT JOIN category ON category_match.category_id = category.category_id;
+
+
+SELECT title_and_genre.title, title_and_genre.name, i.rental_month INTO monthly_genre_rentals
+FROM (SELECT rental.inventory_id, EXTRACT(MONTH FROM rental_date::DATE) as rental_month, inventory.film_id
+FROM rental
+LEFT JOIN inventory ON rental.inventory_id = inventory.inventory_id) AS i
+LEFT JOIN title_and_genre ON i.film_id = title_and_genre.film_id;
+
+SELECT film.title, film.release_year,film.length, film.rating, film.special_features, rc.rental_count, title_and_genre.name INTO top_rentals
+FROM (SELECT COUNT(*) AS rental_count, title 
+FROM monthly_genre_rentals 
+GROUP BY title 
+HAVING COUNT(*) >= 30) AS rc
+LEFT JOIN film ON rc.title = film.title
+LEFT JOIN title_and_genre ON film.film_id = title_and_genre.film_id
+ORDER BY rental_count DESC;
+
+SELECT film.film_id, film.title, actor.first_name, actor.last_name INTO cast_list
+FROM film
+LEFT JOIN film_actor ON film.film_id = film_actor.film_id
+LEFT JOIN actor ON film_actor.actor_id = actor.actor_id
+ORDER BY film.title;
+
+SELECT top_rentals.title, cast_list.first_name, cast_list.last_name, top_rentals.rental_count
+FROM top_rentals
+JOIN cast_list ON top_rentals.title = cast_list.title
+ORDER BY top_rentals.rental_count DESC, top_rentals.title;
+
+SELECT COUNT(rental.*), susan_davis.title
+FROM (SELECT * FROM monthly_genre_rentals WHERE title IN (SELECT title FROM cast_list WHERE first_name = 'Susan' AND last_name = 'Davis')) AS susan_davis
+LEFT JOIN film ON susan_davis.title = film.title
+LEFT JOIN inventory ON film.film_id = inventory.film_id
+LEFT JOIN rental ON inventory.inventory_id = rental.inventory_id
+GROUP BY susan_davis.title
+ORDER BY COUNT(rental.*) DESC;
+
+SELECT COUNT(rental.*), film.title
+FROM film
+LEFT JOIN inventory ON film.film_id = inventory.film_id
+LEFT JOIN rental ON inventory.inventory_id = rental.inventory_id
+GROUP BY title
+ORDER BY COUNT(rental.*) DESC;
+
+SELECT rental.rental_id, CONCAT(customer.first_name, ' ', customer.last_name) AS customer_name, customer.customer_id, customer.active INTO customer_rentals
+FROM rental
+LEFT JOIN customer ON rental.customer_id = customer.customer_id;
+
+SELECT COUNT(active_customers.*) AS rental_count, active_customers.customer_name INTO top_customers
+FROM (SELECT customer_name, active FROM customer_rentals WHERE active = 1) AS active_customers
+GROUP BY active_customers.customer_name
+ORDER BY COUNT(active_customers.*) DESC
+LIMIT 50;
+
+SELECT customer_name, address, city, postal_code, country
+FROM customer_rentals
+JOIN customer ON customer_rentals.customer_id = customer.customer_id
+JOIN address ON customer.address_id = address.address_id
+JOIN city ON address.city_id = city.city_id
+JOIN country ON city.country_id = country.country_id
+WHERE customer_name IN (SELECT customer_name FROM top_customers);
+
+SELECT customer_rentals.*, rental.rental_date, rental.return_date
+FROM customer_rentals
+JOIN rental ON customer_rentals.rental_id = rental.rental_id
+WHERE customer_rentals.active = 0
+ORDER BY customer_rentals.customer_id, rental.rental_date DESC;
+
+SELECT customer_rentals.*, rental.rental_date, rental.return_date
+FROM customer_rentals
+JOIN rental ON customer_rentals.rental_id = rental.rental_id
+WHERE customer_rentals.active = 1
+ORDER BY customer_rentals.customer_id, rental.rental_date DESC;
+
+SELECT customer_rentals.*, rental.rental_date, rental.return_date, film.film_id, film.title, inventory.inventory_id, inventory.store_id INTO delinquent_rentals
+FROM customer_rentals
+JOIN rental ON customer_rentals.rental_id = rental.rental_id
+JOIN inventory ON rental.inventory_id = inventory.inventory_id
+JOIN film ON inventory.film_id = film.film_id
+WHERE rental.return_date IS NULL
+ORDER BY customer_rentals.customer_id, rental.rental_date DESC;
+
+SELECT COUNT(*), customer_name
+FROM delinquent_rentals
+GROUP BY customer_name
+ORDER BY COUNT(*) DESC;
+
+SELECT rental.*, d.customer_name, d.rental_date
+FROM rental
+JOIN delinquent_rentals AS d ON rental.customer_id = d.customer_id
+WHERE rental.customer_id IN (SELECT customer_id FROM delinquent_rentals) AND EXTRACT(YEAR FROM d.rental_date::DATE) = 2005
+ORDER BY rental.rental_date;
