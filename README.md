@@ -19,7 +19,7 @@ My varied background isn’t just a career path—it’s a strength that lets me
 
 I’m currently seeking opportunities to apply this blend of analytical, communicative, and cross-cultural skills to help organizations make data-driven decisions.
 
-##Projects
-Analyzing Gross Margin Fluctuations in a Manufacturing Environment
+## Projects
+[Analyzing Gross Margin Fluctuations in a Manufacturing Environment](gross_margin_project_desc)
 
 Exploring NYC Public School Test Result Scores
