@@ -1,0 +1,47 @@
+```markdown
+### Analyzing Gross-Margin Fluctuations in a Manufacturing Environment
+
+**Goal**  
+Investigate the drivers behind a sudden dip in profit margins highlighted on enterprise-wide Power BI dashboards and recommend data-backed actions.
+
+---
+
+#### Approach
+
+1. **Data Collection & Integration**  
+   - Pulled historical sales and live production data from the ERP via **SAP Crystal Reports**.  
+   - Scraped internal pricing-demo spreadsheets for costing assumptions and factor percentages.  
+   - Conducted interviews with Engineering, Finance, and Production teams to validate data and define outlier-handling rules.  
+   - Consolidated cleaned data in a local **MySQL** database and staged it in **Excel** for analysis.
+
+2. **Analysis Techniques**  
+   - Multiple linear regression to quantify cost drivers.  
+   - Time-series analysis on margins, order volumes, material prices, and production costs.  
+   - Exploratory data analysis and anomaly detection to surface inconsistencies between ERP values and pricing spreadsheets.
+
+3. **Visualization & Communication**  
+   - Built pivot-table dashboards and charts in Excel.  
+   - Summarized insights and process-alignment recommendations in an executive presentation.
+
+---
+
+#### Key Findings
+
+- **Order quantity** and **raw-material price** explained the majority of the margin variance.  
+- Costing logic differed between systems:  
+  - The ERP amortized setup costs across every 1,000-piece batch.  
+  - Pricing tools treated setup as a one-time charge, enabling aggressive quantity discounts.  
+- Additional factors (cycle time, secondary operations, BOM discrepancies) affected individual products but were not systemic.
+
+---
+
+#### Outcome
+
+The analysis clarified costing misalignments, enabling leadership to realign pricing models and update ERP parameters for greater margin visibility. The resulting workflow changes now provide more accurate margin forecasting and support continued KPI improvement.
+
+---
+
+#### Skills & Tools
+
+`SAP Crystal Reports` • `MySQL` • `Excel (Power Query, PivotTables)` • Multiple Linear Regression • Time-Series Analysis • ETL • EDA • Root-Cause Analysis • Data Visualization • Cross-Functional Collaboration
+```
